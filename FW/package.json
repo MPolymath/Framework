@@ -1,9 +1,9 @@
 {
-  "name": "sample",
+  "name": "FW",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "nodemon ./bin/www"
   },
   "dependencies": {
     "express": "~4.10.6",
@@ -14,6 +14,16 @@
     "debug": "~2.1.1",
     "jade": "~1.8.2",
     "mongoose": "~4.1.9",
-    "passport": "~0.3.0"
+    "passport": "~0.3.0",
+	"ejs" : "~0.8.5",
+	"passport-local" : "~0.1.6",
+	"passport-facebook" : "~1.0.2",
+	"passport-twitter" : "~1.0.2",
+	"passport-google-oauth" : "~0.1.5",
+	"connect-flash" : "~0.1.1",
+	"bcrypt-nodejs" : "latest",
+	"method-override": "~1.0.0",
+	"express-session": "~1.0.0",
+	"nodemon": "~1.7.1"
   }
 }
