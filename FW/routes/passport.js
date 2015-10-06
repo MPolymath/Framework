@@ -19,10 +19,10 @@ module.exports = function(passport) {
 	});
 
 // Local signup ======================================
-	passport.use('local-signup', new LocalStrategy({
+	passport.use('local-signup', new localStrategy({
 		usernameField: 'username',
 		passwordField: 'password',
-		passReqToCallback: True,
+		passReqToCallback: true,
 	},
 	function(req, email, password, done){
 		// asynchronous
@@ -36,11 +36,20 @@ module.exports = function(passport) {
 				if (user)
 				{
 					return done(null, false, req.flash('signupMessage', 'That username is already taken'));
-				}
+				} else {
+					// create user
+					var newUser = new User();
+					// set user data
+					newUser.local.user = 'username';
+					newUser.local.password = newUser.generateHash(password);
+					// save user
+					newUser.save(function(err){
+						if (err)
+							throw err;
+						return done(null, newUser);
+					});
 			}
-		);
-	}
-	);
-};
-
-
+			});
+	});
+	}));
+}

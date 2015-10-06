@@ -18,7 +18,12 @@ module.exports = function(app,passport) {
 	});
 
 	// process signup form
-	// app.post('/signup', do all passport stuff here);
+	app.post('/signup', passport.authenticate('local-signup', {
+		successRedirect: '/profile', // redirect on success to profile
+		successFailure: '/signup', // redirect on failure to signup
+		failureFlash: true // allow flash messages
+	}
+	));
 	// PROFILE  ===================================
 	app.get('/profile', isLoggedIn, function (req, res){
 		res.render('profile.ejs', {
