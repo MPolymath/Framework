@@ -1,6 +1,6 @@
 Framework!
 
 Gordon Tasks :
+- ajout nodemon
 - nginx (virtual host)
-- admin index MVC
-- sign index MVC
+- sign index MVC (fichier crée regle les problèmes de path)
