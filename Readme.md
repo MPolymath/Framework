@@ -3,4 +3,5 @@ Framework!
 Gordon Tasks :
 - ajout nodemon
 - nginx (virtual host)
-- sign index MVC (fichier crée regle les problèmes de path)
+- Faire le design de admin avec un template bootstrap
+- Ajout des un formulaire de conexion dans la page sign-in
