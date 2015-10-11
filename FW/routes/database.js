@@ -1,3 +1,4 @@
+
 module.exports = {
-	'url' : 'mongodb://root:toto@localhost:27017/'
+	'url' : 'mongodb://root:toto@localhost:27017/toto'
 }

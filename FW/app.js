@@ -6,42 +6,48 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('passport');
 // routes
-var routes = require('./routes/index');
-var users = require('./routes/users');
+//var routes = require('./routes/index');
+//var users = require('./routes/users');
 //  app instance
 var app = express();
 var mongoose = require('mongoose');
 var flash = require('connect-flash');
 var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 var configDB = require('./routes/database.js');
-
- require('./routes/passport')(passport); // pass passport for configuration
 //  Connect db
-var db = mongoose.connect(configDB.url);
+var db = mongoose.connect(configDB.url, {auth:{authdb:"admin"}});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 //app.set('view engine', 'jade');
 
+// uncomment after placing your favicon in /public
+//app.use(favicon(__dirname + '/public/favicon.ico'))
+app.use(morgan('dev'));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 // required for passport
-app.use(session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secret
+app.use(session({
+			     store: new MongoStore({mongooseConnection: mongoose.connection}),
+				 resave: true,
+				 maxAge: new Date(Date.now() + 3600000),
+				 saveUninitialized:false,
+				 secret: 'foo' })); // session secret
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
-
+require('./routes/passport.js')(passport); // pass passport for configuration
 // routes
 require('./routes/routes.js')(app, passport); // connects routes and configured passport
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
-app.use(morgan('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', routes);
-app.use('/users', users);
+// default routes
+//app.use('/', routes);
+//app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
