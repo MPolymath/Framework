@@ -5,9 +5,6 @@ var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('passport');
-// routes
-//var routes = require('./routes/index');
-//var users = require('./routes/users');
 //  app instance
 var app = express();
 var mongoose = require('mongoose');
@@ -51,9 +48,10 @@ require('./routes/routes.js')(app, passport); // connects routes and configured 
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
+//	var err = new Error('Not Found');
+	res.status(404).send('Not Found');
+// 	err.status = 404;
+//  next(err);
 });
 
 // error handlers

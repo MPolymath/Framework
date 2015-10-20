@@ -1,0 +1,24 @@
+<!-- views/admin.ejs -->
+<!doctype html>
+<html ng-app="myApp">
+  <head>
+	<title>Node Authentication</title>
+	<script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+	<script src="javascripts/ctrl1.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+	<style>
+		body {padding-top: 80px;}
+	</style>
+</head>
+<body ng-controller="myCtrl">
+<!--	<div ng-app="" ng-init="userlist[
+	{username: 'TOTO', password:'TOTO1'},
+	{username: 'TOTO', password:'TOTO1'},
+	{username: 'TOTO', password:'TOTO1'}]"> -->
+  		<div ng-repeat="x in list">
+		  		{{"username: " + x.username}}<br>
+		  		{{"password: " + x.password}}<br>
+		</div>
+</body>
+</html>
