@@ -5,6 +5,7 @@ var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('passport');
+var Twitter = require('twitter-js-client').Twitter;
 //  app instance
 var app = express();
 var mongoose = require('mongoose');
@@ -38,7 +39,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
-require('./routes/passport.js')(passport); // pass passport for configuration
+require('./routes/passport.js')(passport, Twitter); // pass passport for configuration
 // routes
 require('./routes/routes.js')(app, passport); // connects routes and configured passport
 

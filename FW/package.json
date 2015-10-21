@@ -26,6 +26,7 @@
 	"express-session": "~1.11.3",
 	"connect-mongo": "~0.8.2",
 	"nodemon": "~1.7.1",
+	"twitter-node-client": "~0.0.6",
 	"angular": "~1.4.7"
   }
 }

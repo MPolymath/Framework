@@ -3,14 +3,17 @@
 // local all the things we need
 var localStrategy = require('passport-local').Strategy;
 // Facebook all the things we need
-var FacebookStrategy = require('passport-facebook').Strategy;
+var facebookStrategy = require('passport-facebook').Strategy;
+// Facebook all the things we need
+var twitterStrategy = require('passport-twitter').Strategy;
 // import user model
 var User = require('./user');
 // import auth.js
 var configAuth = require('./auth');
+var config;
 
 // export function
-module.exports = function(passport) {
+module.exports = function(passport, Twitter) {
 	// Passport Session Setup
 	passport.serializeUser(function(user, done) {
 		done(null, user.id);
@@ -81,7 +84,7 @@ module.exports = function(passport) {
 	//==================================================
 	// FACEBOOK  =======================================
 	//==================================================
-	passport.use(new FacebookStrategy({
+	passport.use(new facebookStrategy({
 
 		//pull in our app id and secret form auth.js file
 		clientID:		configAuth.facebookAuth.clientID,
@@ -128,5 +131,79 @@ module.exports = function(passport) {
 					});
 				}
 			});
+		});
+	}));
+
+	//==================================================
+	// TWITTER  ========================================
+	//==================================================
+	passport.use(new twitterStrategy({
+
+		//Pull in our app id and secret form auth.js file
+		consumerKey:	configAuth.twitterAuth.consumerKey,
+		consumerSecret:	configAuth.twitterAuth.consumerSecret,
+		callbackURL:	configAuth.twitterAuth.callbackURL,
+		profileFields: ['id', 'username', 'displayName']
+	},
+	function(token, tokenSecret, profile, done){
+		//make code asynchronous
+		//User will only activate when data returned from twitter
+		User.findOne({ 'twitter.id' : profile.id }, function(err, user) {
+			//if there is an error, stop everything and return that
+			//ie is an error connecting database
+			var twitter;
+
+			if (err)
+				return done(err);
+
+			//if the user is found log them in
+			if (user)
+			{
+				var config = {
+					"consumerKey": configAuth.twitterAuth.consumerKey,
+					"consumerSecret": configAuth.twitterAuth.consumerSecret,
+					"accessToken": user.twitter.token,
+					"accessTokenSecret": user.twitter.tokenSecret,
+					"callBackUrl": configAuth.twitterAuth.callbackURL
+				}
+				twitter = new Twitter(config);
+//				console.log(twitter);
+				if (twitter){
+					user.twitter.twitter = twitter;
+				}else{
+					user.twitter.twitter = {};
+				}
+				return done(null, user); // user found, return user
+			}else{
+				// create new user if none found
+				var newUser = new User();
+
+				// set all newUser informations
+				newUser.twitter.id			= profile.id;
+				newUser.twitter.token		= token;
+				newUser.twitter.tokenSecret = configAuth.twitterAuth.tokenSecret;
+				newUser.twitter.username	= profile.username;
+				newUser.twitter.displayName	= profile.displayName;
+
+				var config = {
+					"consumerKey": configAuth.twitterAuth.consumerKey,
+					"consumerSecret": configAuth.twitterAuth.consumerSecret,
+					"accessToken": newUser.twitter.token,
+					"accessTokenSecret": newUser.twitter.tokenSecret,
+					"callBackUrl": configAuth.twitterAuth.callbackURL
+				};
+				twitter = new Twitter(config);
+				if (twitter){
+					newUser.twitter.twitt = twitter;
+				}else{
+					newUser.twitter.twitt = {};
+				}
+
+				newUser.save(function(err){
+				if (err)
+					throw err;
+				return done(null, newUser);
+				});
+			}
 		});
 	}))};

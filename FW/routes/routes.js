@@ -3,6 +3,11 @@ module.exports = function(app,passport) {
 	app.get('/', function(req, res){
 		res.render('index.ejs');
 	});
+	// TWITTER QUERY  ===================================
+	app.get('/twitter', function(req, res){
+		console.log(require('./twitter.js')());
+		res.render('index.ejs');
+	});
 	// LOCAL LOGIN    ===================================
 	app.get('/login', function(req, res){
 		res.render('login.ejs', {message: req.flash('loginMessage')});
@@ -44,10 +49,33 @@ module.exports = function(app,passport) {
 			failureRedirect : '/'
 	}));
 
+	// ==================================================
+	// TWITTER ==========================================
+	// ==================================================
+	// route for twitter authentication and login
+	app.get('/auth/twitter', passport.authenticate('twitter'));
+
+	// handle call back once twitter user has been authenticated
+	app.get('/auth/twitter/callback',
+		passport.authenticate('twitter', {
+			successRedirect : '/profile',
+			failureRedirect : '/'
+	}));
+
 	// PROFILE  ===================================
 	app.get('/profile', isLoggedIn, function (req, res){
+		//Callback functions
+		var error = function (err, response, body) {
+			console.log(err);
+		};
+		var success = function (data) {
+			console.log(data);
+		};
+		console.log(req.user.twitter);
+//		var results = req.user.twitter.getSearch({'q':'#haiku','count': 10}, error, success);
 		res.render('profile.ejs', {
-			user: req.user
+			user: req.user,
+//			result: results
 		});
 	});
 	// LOGOUT   ===================================
