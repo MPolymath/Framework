@@ -1,17 +1,11 @@
+var vhost = require('vhost');
+
 module.exports = function(app,passport) {
-	// HOMEPAGE ===================================
-	app.get('/', function(req, res){
-		res.render('index.ejs');
-	});
-	// TWITTER QUERY  ===================================
-	app.get('/twitter', function(req, res){
-		console.log(require('./twitter.js')());
-		res.render('index.ejs');
-	});
+	// VHOST set up
 	// LOCAL LOGIN    ===================================
-	app.get('/login', function(req, res){
-		res.render('login.ejs', {message: req.flash('loginMessage')});
-	});
+	app.use(vhost("login.local.42.fr", function(req, res, next) {
+			res.render('login.ejs', {message: req.flash('loginMessage')});
+	}));
 
 	// process login form
 	// app.post('/login', do all passport stuff here);
@@ -24,6 +18,48 @@ module.exports = function(app,passport) {
 
 	// LOCAL SIGNUP   ===================================
 	// show the signup form
+	app.use(vhost("signup.local.42.fr", function(req, res, next) {
+		res.render('signup.ejs', {message: req.flash('signupMessage')});
+	}));
+
+	// process signup form
+	app.post('/signup', passport.authenticate('local-signup', {
+		successRedirect: '/profile', // redirect on success to profile
+		successFailure: '/signup', // redirect on failure to signup
+		failureFlash: true // allow flash messages
+	}
+	));
+
+	app.use(vhost("twitter.local.42.fr", function(req, res, next) {
+		require('./twitter.js')();
+		res.render('index.ejs');
+	}));
+	// HOMEPAGE ===================================
+	app.get('/', function(req, res){
+		res.render('index.ejs');
+	});
+	// TWITTER QUERY  ===================================
+
+	app.get('/twitter', function(req, res){
+		console.log(require('./twitter.js')());
+		res.render('index.ejs');
+	});
+/*	// LOCAL LOGIN    ===================================
+	app.get('/login', function(req, res){
+		res.render('login.ejs', {message: req.flash('loginMessage')});
+	});
+
+	// process login form
+	// app.post('/login', do all passport stuff here);
+	app.post('/login', passport.authenticate('local-login', {
+		successRedirect: '/profile', // redirect on success to profile
+		successFailure: '/login', // redirect on failure to signup
+		failureFlash: true // allow flash messages
+	}
+	));*/
+
+/*	// LOCAL SIGNUP   ===================================
+	// show the signup form
 	app.get('/signup', function(req, res){
 		res.render('signup.ejs', {message: req.flash('signupMessage')});
 	});
@@ -34,7 +70,7 @@ module.exports = function(app,passport) {
 		successFailure: '/signup', // redirect on failure to signup
 		failureFlash: true // allow flash messages
 	}
-	));
+	));*/
 
 	// ==================================================
 	// FACEBOOK =========================================
